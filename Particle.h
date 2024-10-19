@@ -1,30 +1,31 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
-#include "ParticleType.h"
 #include "ParticleResonance.h"
+#include "ParticleType.h"
+#include <vector>
 
-struct physVector
-{
-    double Px,Py,Pz;
-    physVector(double x=0.,double y=0.,double z=0.);
+struct PhysVector {
+  double x, y, z;
 };
 
-class Particle
-{
+class Particle {
 public:
-    Particle(const char* Name, const physVector Impulse);
-    int GetIndex();
-    const physVector GetImpulse();
-    static void AddParticleType(const char* fName,const double fMass,const int fCharge,const double fWidth=0.);
-    void SetIndex(int Index);
-    void SetIndex(const char* Name);
+  Particle(const std::string &name, const PhysVector impulse);
+  int GetIndex() const;
+  const PhysVector GetImpulse() const;
+  static void AddParticleType(const std::string &name, const double mass,
+                              const int charge, const double width = 0.);
+  void SetIndex(int index);
+  void SetIndex(const std::string &name);
+
 private:
-    const physVector Impulse_;
-    int fIndex_;
-    static const int fMaxNumParticleType_ = 10;
-    static int fNParticleType_;
-    static ParticleType *fParticleType_[fMaxNumParticleType_];
-    int FindParticle(const char* Name);
+  int FindParticle(const std::string &name);
+
+  const PhysVector impulse_;
+  int index_;
+  static const int maxNumParticleTypes_ = 10;
+  static int numParticleTypes_;
+  static std::vector<ParticleType> particleTypes_;
 };
 
 #endif

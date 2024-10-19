@@ -1,9 +1,13 @@
-#include <iostream>
 #include "ParticleResonance.h"
+#include <iostream>
 
-ParticleResonance::ParticleResonance(const char* fName, const double fMass, const int fCharge,const double fWidth) : ParticleType(fName,fMass,fCharge), fWidth_(fWidth) {}
-    double ParticleResonance::GetParticleWidth() const {return fWidth_;} ;
-    void ParticleResonance::PrintData() const {
-        ParticleType::PrintData();
-        std::cout << "Width:" << fWidth_ << std::endl;
-    };
+ParticleResonance::ParticleResonance(const std::string &name, const double mass,
+                                     const int charge, const double width)
+    : ParticleType(name, mass, charge), width_(width) {}
+
+double ParticleResonance::GetParticleWidth() const { return width_; };
+
+void ParticleResonance::PrintData() const {
+  ParticleType::PrintData();
+  std::cout << "Width:" << width_ << std::endl;
+};
