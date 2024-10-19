@@ -19,7 +19,7 @@ public:
   void SetIndex(const std::string &name);
 
 private:
-  int FindParticle(const std::string &name);
+  static int FindParticle(const std::string &name);
 
   const PhysVector impulse_;
   int index_;

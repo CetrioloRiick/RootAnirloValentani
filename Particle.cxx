@@ -1,4 +1,5 @@
 #include "Particle.h"
+#include "ParticleResonance.h"
 #include "ParticleType.h"
 #include <algorithm>
 #include <iostream>
@@ -29,25 +30,21 @@ int Particle::FindParticle(const std::string &name) {
 
 int Particle::GetIndex() const { return index_; }
 const PhysVector Particle::GetImpulse() const { return impulse_; }
+
 void Particle::AddParticleType(const std::string &name, const double mass,
                                const int charge, const double width) {
   if (numParticleTypes_ == maxNumParticleTypes_) {
     std::cout << "Max number of type reached" << std::endl;
-  } else {
-    for (int i = 0; i < numParticleTypes_; i++) {
-      if (name == particleTypes_[i].GetParticleName()) {
-        std::cout << "Particle" << name << "already present" << std::endl;
-      } else {
-        numParticleTypes_++;
-        if (width == 0) {
-          // particleTypes_[numParticleTypes_] = ParticleType(name, mass,
-          // charge);
-        } else {
-          // particleTypes_[numParticleTypes_] =              new
-          // ParticleResonance(name, mass, charge, width);
-        }
-      }
+  } else if (FindParticle(name) == -1) {
+    if (width == 0.) {
+      particleTypes_.push_back({name, mass, charge});
+
+    } else {
+      particleTypes_.push_back(ParticleResonance{name, mass, charge, width});
     }
+    numParticleTypes_++;
+  } else {
+    std::cout << "Particle" << name << "already present" << std::endl;
   }
 }
 
