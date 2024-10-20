@@ -53,3 +53,8 @@ void Particle::SetIndex(int index) { index_ = index; }
 void Particle::SetIndex(const std::string &name) {
   index_ = FindParticle(name);
 }
+
+std::ostream &operator<<(std::ostream &os, const PhysVector &vec) {
+  os << "PhysVector(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+  return os;
+}

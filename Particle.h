@@ -28,4 +28,5 @@ private:
   static std::vector<ParticleType> particleTypes_;
 };
 
+std::ostream &operator<<(std::ostream &os, const PhysVector &vec);
 #endif

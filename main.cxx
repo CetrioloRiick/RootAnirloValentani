@@ -21,6 +21,9 @@ int main() {
   Particle::AddParticleType("K*", 0.892, 0, 0.05);
   Particle particle1("K+", {2., 4., 1});
   Particle particle2("K*", {1., 0., 3.});
-  std::cout << "Indice particle1: " << particle1.GetIndex() << std::endl;
-  std::cout << "Indice particle2 : " << particle2.GetIndex() << std::endl;
+
+  std::cout << "Indice  particle1: " << particle1.GetIndex() << std::endl;
+  std::cout << "Impulso particle1: " << particle1.GetImpulse() << std::endl;
+  std::cout << "Indice  particle2: " << particle2.GetIndex() << std::endl;
+  std::cout << "Impulso particle2: " << particle2.GetImpulse() << std::endl;
 }
