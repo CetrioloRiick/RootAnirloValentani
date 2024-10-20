@@ -9,9 +9,7 @@ int Particle::numParticleTypes_ = 0;
 std::vector<ParticleType> Particle::particleTypes_;
 
 Particle::Particle(const std::string &name, PhysVector impulse)
-    : impulse_(impulse) {
-  index_ = FindParticle(name);
-}
+    : index_(FindParticle(name)), impulse_(impulse) {}
 
 int Particle::FindParticle(const std::string &name) {
   auto firstType = particleTypes_.begin();
@@ -37,22 +35,25 @@ void Particle::AddParticleType(const std::string &name, const double mass,
     std::cout << "Max number of type reached" << std::endl;
   } else if (FindParticle(name) == -1) {
     if (width == 0.) {
-      particleTypes_.push_back({name, mass, charge});
+      particleTypes_.emplace_back(ParticleType{name, mass, charge});
 
     } else {
-      particleTypes_.push_back(ParticleResonance{name, mass, charge, width});
+      particleTypes_.emplace_back(ParticleResonance{name, mass, charge, width});
     }
     numParticleTypes_++;
   } else {
     std::cout << "Particle" << name << "already present" << std::endl;
   }
 }
+// std::vector<ParticleType> Particle::GetParticleTypes() { return
+// particleTypes_; }
 
+/*
 void Particle::SetIndex(int index) { index_ = index; }
 
 void Particle::SetIndex(const std::string &name) {
   index_ = FindParticle(name);
-}
+}*/
 
 std::ostream &operator<<(std::ostream &os, const PhysVector &vec) {
   os << "PhysVector(" << vec.x << ", " << vec.y << ", " << vec.z << ")";

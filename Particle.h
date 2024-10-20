@@ -15,14 +15,16 @@ public:
   const PhysVector GetImpulse() const;
   static void AddParticleType(const std::string &name, const double mass,
                               const int charge, const double width = 0.);
+  //static std::vector<ParticleType> GetParticleTypes();
+
   void SetIndex(int index);
   void SetIndex(const std::string &name);
 
 private:
   static int FindParticle(const std::string &name);
 
-  const PhysVector impulse_;
-  int index_;
+  PhysVector impulse_;
+  const int index_;
   static const int maxNumParticleTypes_ = 10;
   static int numParticleTypes_;
   static std::vector<ParticleType> particleTypes_;
