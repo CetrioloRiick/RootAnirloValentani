@@ -14,8 +14,9 @@ Particle::Particle(const std::string &name, PhysVector impulse)
 int Particle::FindParticle(const std::string &name) {
   auto firstType = particleTypes_.begin();
   auto endType = particleTypes_.end();
+
   auto it = std::find_if(firstType, endType, [&](const ParticleType &pt) {
-    return name == pt.GetParticleName();
+    return name == pt.GetName();
   });
 
   if (it != endType) {
@@ -45,8 +46,9 @@ void Particle::AddParticleType(const std::string &name, const double mass,
     std::cout << "Particle" << name << "already present" << std::endl;
   }
 }
-// std::vector<ParticleType> Particle::GetParticleTypes() { return
-// particleTypes_; }
+std::vector<ParticleType> Particle::GetParticleTypes() {
+  return particleTypes_;
+}
 
 /*
 void Particle::SetIndex(int index) { index_ = index; }
