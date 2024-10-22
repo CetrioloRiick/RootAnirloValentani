@@ -1,6 +1,5 @@
 #include "ParticleType.h"
 #include <iostream>
-#include <iterator>
 #include <ostream>
 
 ParticleType::ParticleType(const std::string &name, const double mass,

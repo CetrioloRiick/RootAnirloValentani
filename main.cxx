@@ -1,6 +1,4 @@
 #include "Particle.h"
-#include "ParticleType.h"
-#include "ResonanceType.h"
 #include <iostream>
 
 /* int main()
