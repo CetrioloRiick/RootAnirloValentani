@@ -26,14 +26,15 @@ int main() {
   std::cout << "Impulso particle1: " << particle1.GetImpulse() << std::endl;
   std::cout << "Indice  particle2: " << particle2.GetIndex() << std::endl;
   std::cout << "Impulso particle2: " << particle2.GetImpulse() << std::endl;
-  Particle::GetParticleTypes()[0].PrintData();
-  Particle::GetParticleTypes()[1].PrintData();
+  Particle::GetParticleTypes()[0]->PrintData();
+  Particle::GetParticleTypes()[1]->PrintData();
 
   ResonanceType pippo{"K+", 0.493, 1, 0.05};
   auto pluto = Particle::GetParticleTypes();
   auto it=pluto.begin();
   it++;
-  it->PrintData();/*
+  //it->->PrintData();
+  /*
   ParticleType *pippop{&pippo};
   pippop->PrintData();*/
   /*

@@ -10,10 +10,10 @@ public:
   void PrintData() const override;
 
 private:
-  double width_;
+  const double width_;
 };
 
-std::ostream &operator<<(std::ostream &os, const ResonanceType &rt);
+//std::ostream &operator<<(std::ostream &os, const ResonanceType &rt);
 
 
 #endif

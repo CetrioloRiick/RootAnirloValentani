@@ -5,7 +5,7 @@
 class ParticleType {
 public:
   ParticleType(const std::string &name, const double mass, const int charge);
-  const std::string GetName() const;
+  std::string GetName() const;
   double GetMass() const;
   int GetCharge() const;
   virtual void PrintData() const;
@@ -16,6 +16,6 @@ private:
   const int charge_;
 };
 
-std::ostream &operator<<(std::ostream &os, const ParticleType &pv);
+//std::ostream &operator<<(std::ostream &os, const ParticleType &pv);
 
 #endif

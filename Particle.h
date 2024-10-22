@@ -13,7 +13,7 @@ public:
   Particle(const std::string &name, const PhysVector impulse);
   int GetIndex() const;
   const PhysVector GetImpulse() const;
-  static std::vector<ParticleType> GetParticleTypes();
+  static std::vector<ParticleType*> GetParticleTypes();
   static void AddParticleType(const std::string &name, const double mass,
                               const int charge, const double width = 0.);
   // static std::vector<ParticleType> GetParticleTypes();
@@ -28,7 +28,7 @@ private:
   PhysVector impulse_;
   static const int maxNumParticleTypes_ = 10;
   static int numParticleTypes_;
-  static std::vector<ParticleType> particleTypes_;
+  static std::vector<ParticleType*> particleTypes_;
 };
 
 std::ostream &operator<<(std::ostream &os, const PhysVector &pv);

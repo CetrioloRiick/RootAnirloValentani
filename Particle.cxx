@@ -5,8 +5,7 @@
 #include <iostream>
 
 int Particle::numParticleTypes_ = 0;
-
-std::vector<ParticleType> Particle::particleTypes_;
+std::vector<ParticleType*> Particle::particleTypes_;
 
 Particle::Particle(const std::string &name, PhysVector impulse)
     : index_(FindParticle(name)), impulse_(impulse) {}
@@ -15,8 +14,8 @@ int Particle::FindParticle(const std::string &name) {
   auto firstType = particleTypes_.begin();
   auto endType = particleTypes_.end();
 
-  auto it = std::find_if(firstType, endType, [&](const ParticleType pt) {
-    return name == pt.GetName();
+  auto it = std::find_if(firstType, endType, [&](const ParticleType* pt) {
+    return name == pt->GetName();
   });
 
   if (it != endType) {
@@ -37,16 +36,16 @@ void Particle::AddParticleType(const std::string &name, const double mass,
     std::cout << "Max number of type reached" << std::endl;
   } else if (FindParticle(name) == -1) {
     if (width == 0.) {
-      particleTypes_.push_back(ParticleType{name, mass, charge});
+      particleTypes_.push_back(new ParticleType(name, mass, charge));
     } else {
-      particleTypes_.push_back(ResonanceType{name, mass, charge, width});
+      particleTypes_.push_back(new ResonanceType(name, mass, charge, width));
     }
     numParticleTypes_++;
   } else {
     std::cout << "Particle" << name << "already present" << std::endl;
   }
 }
-std::vector<ParticleType> Particle::GetParticleTypes() {
+std::vector<ParticleType*> Particle::GetParticleTypes() {
   return particleTypes_;
 }
 

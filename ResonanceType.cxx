@@ -8,11 +8,16 @@ ResonanceType::ResonanceType(const std::string &name, const double mass,
 
 double ResonanceType::GetWidth() const { return width_; };
 
-void ResonanceType::PrintData() const { std::cout << "pippo"; }
+void ResonanceType::PrintData() const {
+  ParticleType::PrintData();
+  std::cout << ", width: " << width_ << std::endl;
+}
 
+/*
 std::ostream &operator<<(std::ostream &os, const ResonanceType &rt) {
   os << "ResonanceType(name: " << rt.GetName() << ", mass: " << rt.GetMass()
      << ", charge: " << rt.GetCharge() << ", width: " << rt.GetWidth() << ')'
      << std::endl;
   return os;
 }
+*/
