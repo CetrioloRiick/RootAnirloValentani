@@ -9,11 +9,7 @@ const std::string ParticleType::GetName() const { return name_; };
 double ParticleType::GetMass() const { return mass_; };
 int ParticleType::GetCharge() const { return charge_; };
 
-void ParticleType::PrintData() const {
-  std::cout << "Name:" << name_ << std::endl;
-  std::cout << "Mass:" << mass_ << std::endl;
-  std::cout << "Charge:" << charge_ << std::endl;
-}
+void ParticleType::PrintData() const { std::cout << *this; }
 
 std::ostream &operator<<(std::ostream &os, const ParticleType &pt) {
   os << "ParticleType(name: " << pt.GetName() << ", mass: " << pt.GetMass()

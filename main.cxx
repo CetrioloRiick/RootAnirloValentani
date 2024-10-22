@@ -1,17 +1,17 @@
 #include "Particle.h"
-#include "ParticleResonance.h"
 #include "ParticleType.h"
+#include "ResonanceType.h"
 #include <iostream>
 
 /* int main()
 {
     ParticleType particleType1("protone", 2.5, 4);
-    ParticleResonance particleType2("neutrone", 3.43, -1, 0.001);
+    ResonanceType particleType2("neutrone", 3.43, -1, 0.001);
     particleType1.PrintData();
     particleType2.PrintData();
     ParticleType *test[2];
     test[0]=new ParticleType("pione+",1.7,1);
-    test[1]=new ParticleResonance("pione0",1.9,0,0.23);
+    test[1]=new ResonanceType("pione0",1.9,0,0.23);
     for(int i=0;i<2;i++)test[i]->PrintData();
     return 0;
 } */
@@ -26,6 +26,27 @@ int main() {
   std::cout << "Impulso particle1: " << particle1.GetImpulse() << std::endl;
   std::cout << "Indice  particle2: " << particle2.GetIndex() << std::endl;
   std::cout << "Impulso particle2: " << particle2.GetImpulse() << std::endl;
-  std::cout << "Particella: " << Particle::GetParticleTypes()[0];
-  //Particle::GetParticleTypes()[1].PrintData();
+  Particle::GetParticleTypes()[0].PrintData();
+  Particle::GetParticleTypes()[1].PrintData();
+
+  ResonanceType pippo{"K+", 0.493, 1, 0.05};
+  auto pluto = Particle::GetParticleTypes();
+  auto it=pluto.begin();
+  it++;
+  it->PrintData();/*
+  ParticleType *pippop{&pippo};
+  pippop->PrintData();*/
+  /*
+    ResonanceType pippo{"K+", 0.493, 1, 0.05};
+    ParticleType pluto{"K+", 0.493, 1};
+    ParticleType *pippop{&pluto};
+
+    pippop->PrintData();
+
+    pippop = &pippo;
+
+    pippop->PrintData();
+  */
+  // Particle::GetParticleTypes()[0]->PrintData();
+  // Particle::GetParticleTypes()[1]->GetWidth();
 }

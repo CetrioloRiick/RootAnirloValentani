@@ -1,7 +1,7 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
-#include "ParticleResonance.h"
 #include "ParticleType.h"
+#include "ResonanceType.h"
 #include <vector>
 
 struct PhysVector {
@@ -21,11 +21,9 @@ public:
   void SetIndex(int index);
   void SetIndex(const std::string &name);
 
-
-
 private:
   static int FindParticle(const std::string &name);
-  
+
   const int index_;
   PhysVector impulse_;
   static const int maxNumParticleTypes_ = 10;
@@ -34,5 +32,6 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &os, const PhysVector &pv);
-std::ostream &operator<<(std::ostream &os, const std::vector<ParticleType> &vec);
+std::ostream &operator<<(std::ostream &os,
+                         const std::vector<ParticleType> &vec);
 #endif
