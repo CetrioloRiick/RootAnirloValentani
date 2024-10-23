@@ -1,6 +1,7 @@
 #include "Particle.h"
 #include "TMath.h"
 #include "TRandom.h"
+#include <algorithm>
 #include <iostream>
 
 /* int main()
@@ -33,32 +34,45 @@ int main() {
   const int N{nGen + 20};
 
   std::array<Particle, N> EventParticle{};
-  double theta = 0., phi = 0., Ptot;
+  // double theta = 0., phi = 0., Ptot;
   int j{nGen};
 
-  for (int i = 0; i < nGen; i++) {
-    theta = gRandom->TRandom::Uniform() * TMath::Pi();
-    phi = gRandom->TRandom::Uniform() * 2 * TMath::Pi();
-    Ptot = gRandom->TRandom::Exp(1.);
+  // Funzione per generare casualmente impulso in direzioni casuali
+  auto generateImpulse = [&]() -> PhysVector {
+    double theta = gRandom->TRandom::Uniform(0, TMath::Pi());
+    double phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
+    double Ptot = gRandom->TRandom::Exp(1.);
 
-    EventParticle[i].SetImpulse({Ptot * cos(phi) * sin(theta),
-                                 Ptot * sin(phi) * sin(theta),
-                                 Ptot * cos(theta)});
-    double x = gRandom->Rndm();
+    return Ptot *
+           PhysVector{cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)};
+  };
+
+  // Funzione per determinare l'indice della particella in base a x
+  auto generateParticleName = [&](double x) -> std::string {
     if (x < 0.4)
-      EventParticle[i].SetIndex("pi+");
-    else if (x < 0.8)
-      EventParticle[i].SetIndex("pi-");
-    else if (x < 0.85)
-      EventParticle[i].SetIndex("K+");
-    else if (x < 0.9)
-      EventParticle[i].SetIndex("K-");
-    else if (x < 0.945)
-      EventParticle[i].SetIndex("P+");
-    else if (x < 0.99)
-      EventParticle[i].SetIndex("P-");
-    else {
-      EventParticle[i].SetIndex("K*");
+      return "pi+";
+    if (x < 0.8)
+      return "pi-";
+    if (x < 0.85)
+      return "K+";
+    if (x < 0.9)
+      return "K-";
+    if (x < 0.945)
+      return "P+";
+    if (x < 0.99)
+      return "P-";
+    return "K*";
+  };
+
+  // Iterazione sugli eventi
+  std::for_each_n(EventParticle.begin(), nGen, [&](Particle &p) {
+    p.SetImpulse(generateImpulse());
+
+    double x = gRandom->Rndm();
+    std::string name = generateParticleName(x);
+    p.SetIndex(name);
+
+    if (name == "K*") {
       if (x < 0.995) {
         EventParticle[j].SetIndex("pi+");
         EventParticle[j + 1].SetIndex("K-");
@@ -66,10 +80,51 @@ int main() {
         EventParticle[j].SetIndex("K+");
         EventParticle[j + 1].SetIndex("pi-");
       }
-      EventParticle[i].Decay2body(EventParticle[j], EventParticle[j + 1]);
-      j += 2;
+      p.Decay2body(EventParticle[j], EventParticle[j + 1]);
+      j += 2; // Avanzare il contatore per gli eventi successivi
     }
-  }
+  });
+
+  /*
+
+    std::for_each_n(EventParticle.begin(), nGen,
+                    [&](Particle &p) { // Sarebbe meglio mettere generate
+                      theta = gRandom->TRandom::Uniform(0, TMath::Pi());
+                      phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
+                      Ptot = gRandom->TRandom::Exp(1.);
+
+                      p.SetImpulse(Ptot * PhysVector{cos(phi) * sin(theta),
+                                                     sin(phi) * sin(theta),
+                                                     cos(theta)});
+                      double x = gRandom->Rndm();
+                      if (x < 0.4)
+                        p.SetIndex("pi+");
+                      else if (x < 0.8)
+                        p.SetIndex("pi-");
+                      else if (x < 0.85)
+                        p.SetIndex("K+");
+                      else if (x < 0.9)
+                        p.SetIndex("K-");
+                      else if (x < 0.945)
+                        p.SetIndex("P+");
+                      else if (x < 0.99)
+                        p.SetIndex("P-");
+                      else {
+                        p.SetIndex("K*");
+                        if (x < 0.995) {
+                          EventParticle[j].SetIndex("pi+");
+                          EventParticle[j + 1].SetIndex("K-");
+                        } else {
+                          EventParticle[j].SetIndex("K+");
+                          EventParticle[j + 1].SetIndex("pi-");
+                        }
+                        p.Decay2body(EventParticle[j], EventParticle[j + 1]);
+                        j += 2;
+                      }
+                    });
+
+                    */
+
 
   std::for_each_n(EventParticle.begin(), j,
                   [](const Particle &p) { p.PrintData(); });

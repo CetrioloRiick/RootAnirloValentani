@@ -7,9 +7,10 @@
 struct PhysVector {
   double x, y, z;
 
-  PhysVector operator+(const PhysVector &v) const;
-  double operator*(const PhysVector &v) const;
+  PhysVector operator+(const PhysVector &pv) const;
+  double operator*(const PhysVector &pv) const;
 };
+PhysVector operator*(double scalar, const PhysVector &pv);
 
 class Particle {
 public:
@@ -41,8 +42,6 @@ private:
 
   int index_;
   PhysVector impulse_;
-  static const int maxNumParticleTypes_ = 10;
-  static int numParticleTypes_;
   static std::vector<ParticleType *> particleTypes_;
   void Boost(double bx, double by, double bz);
 };

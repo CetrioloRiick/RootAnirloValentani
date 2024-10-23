@@ -6,16 +6,19 @@
 #include <cstdlib> //for RAND_MAX
 #include <iostream>
 
-int Particle::numParticleTypes_ = 0;
 std::vector<ParticleType *> Particle::particleTypes_;
 
-PhysVector PhysVector::operator+(const PhysVector &v) const {
-  return {x + v.x, y + v.y, z + v.z};
-}
-double PhysVector::operator*(const PhysVector &v) const {
-  return x * v.x + y * v.y + z * v.z;
+PhysVector PhysVector::operator+(const PhysVector &pv) const {
+  return {x + pv.x, y + pv.y, z + pv.z};
 }
 
+double PhysVector::operator*(const PhysVector &pv) const {
+  return x * pv.x + y * pv.y + z * pv.z;
+}
+
+PhysVector operator*(double scalar, const PhysVector &pv) {
+  return {scalar * pv.x, scalar * pv.y, scalar * pv.z};
+}
 Particle::Particle() {};
 
 Particle::Particle(const std::string &name, PhysVector impulse)
@@ -64,17 +67,14 @@ void Particle::SetImpulse(PhysVector pv) { impulse_ = pv; }
 
 void Particle::AddParticleType(const std::string &name, const double mass,
                                const int charge, const double width) {
-  if (numParticleTypes_ == maxNumParticleTypes_) {
-    std::cout << "Max number of type reached" << std::endl;
-  } else if (FindParticle(name) == -1) {
+  if (FindParticle(name) == -1) {
     if (width == 0.) {
-      particleTypes_.push_back(new ParticleType(name, mass, charge));
+      particleTypes_.emplace_back(new ParticleType(name, mass, charge));
     } else {
-      particleTypes_.push_back(new ResonanceType(name, mass, charge, width));
+      particleTypes_.emplace_back(new ResonanceType(name, mass, charge, width));
     }
-    numParticleTypes_++;
   } else {
-    std::cout << "Particle" << name << "already present" << std::endl;
+    std::cout << "Particle " << name << " already present" << std::endl;
   }
 }
 
