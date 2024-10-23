@@ -9,6 +9,7 @@ ParticleType::ParticleType(const std::string &name, const double mass,
 std::string ParticleType::GetName() const { return name_; };
 double ParticleType::GetMass() const { return mass_; };
 int ParticleType::GetCharge() const { return charge_; };
+double ParticleType::GetWidth() const {return -1.0;};
 
 void ParticleType::PrintData() const {
   std::cout << "name: " << name_ << ", mass: " << mass_

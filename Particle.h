@@ -23,7 +23,7 @@ public:
 
   void SetIndex(int index);
   void SetIndex(const std::string &name);
-  void SetImpulse(PhysVector &pv);
+  void SetImpulse(PhysVector pv);
 
   static void PrintParticleTypes();
   void PrintData();
@@ -33,6 +33,8 @@ public:
 
   double InvMass(Particle &p) const;
 
+  int Decay2body(Particle &dau1,Particle &dau2) const;
+
 private:
   static int FindParticle(const std::string &name);
 
@@ -41,6 +43,7 @@ private:
   static const int maxNumParticleTypes_ = 10;
   static int numParticleTypes_;
   static std::vector<ParticleType *> particleTypes_;
+  void Boost(double bx, double by, double bz);
 };
 
 std::ostream &operator<<(std::ostream &os, const PhysVector &pv);

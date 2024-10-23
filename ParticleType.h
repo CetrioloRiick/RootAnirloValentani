@@ -8,6 +8,7 @@ public:
   std::string GetName() const;
   double GetMass() const;
   int GetCharge() const;
+  double GetWidth() const;
   virtual void PrintData() const;
 
 private:
