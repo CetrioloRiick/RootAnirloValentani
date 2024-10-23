@@ -16,6 +16,8 @@ double PhysVector::operator*(const PhysVector &v) const {
   return x * v.x + y * v.y + z * v.z;
 }
 
+Particle::Particle(){};
+
 Particle::Particle(const std::string &name, PhysVector impulse)
     : index_(FindParticle(name)), impulse_(impulse) {}
 
@@ -82,7 +84,7 @@ void Particle::PrintParticleTypes() {
                 [](const ParticleType *pt) { pt->PrintData(); });
 }
 
-void Particle::PrintData() {
+void Particle::PrintData() const{
   std::cout << "Index: " << index_
             << ", name: " << particleTypes_[index_]->GetName()
             << ", impulse: " << impulse_;

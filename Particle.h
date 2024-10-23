@@ -13,6 +13,7 @@ struct PhysVector {
 
 class Particle {
 public:
+  Particle();
   Particle(const std::string &name, const PhysVector impulse);
 
   int GetIndex() const;
@@ -26,7 +27,7 @@ public:
   void SetImpulse(PhysVector pv);
 
   static void PrintParticleTypes();
-  void PrintData();
+  void PrintData() const;
 
   static void AddParticleType(const std::string &name, const double mass,
                               const int charge, const double width = 0.);

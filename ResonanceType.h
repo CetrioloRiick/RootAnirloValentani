@@ -6,7 +6,7 @@ class ResonanceType : public ParticleType {
 public:
   ResonanceType(const std::string &name, const double mass,
                     const int charge, const double width);
-  double GetWidth() const;
+  double GetWidth() const override;
   void PrintData(char lastChar='\n') const override;
 
 private:
