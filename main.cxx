@@ -1,7 +1,7 @@
 #include "Particle.h"
-#include <iostream>
-#include "TRandom.h"
 #include "TMath.h"
+#include "TRandom.h"
+#include <iostream>
 
 /* int main()
 {
@@ -16,8 +16,7 @@
     return 0;
 } */
 
-int main()
-{
+int main() {
   Particle::AddParticleType("pi+", 0.13957, 1);
   Particle::AddParticleType("pi-", 0.13957, -1);
   Particle::AddParticleType("P+", 0.93827, 1);
@@ -27,20 +26,24 @@ int main()
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
   Particle::PrintParticleTypes();
 
-  const int nGen{10};
-  const int N{nGen + 6};
+  Particle particle2("K*", {1., 0., 3.});
+
+  // particle2.SetImpulse({1, 1, 1});
+  const int nGen{100};
+  const int N{nGen + 20};
 
   std::array<Particle, N> EventParticle{};
   double theta = 0., phi = 0., Ptot;
   int j{nGen};
 
-  for (int i = 0; i < nGen; i++)
-  {
+  for (int i = 0; i < nGen; i++) {
     theta = gRandom->TRandom::Uniform() * TMath::Pi();
     phi = gRandom->TRandom::Uniform() * 2 * TMath::Pi();
     Ptot = gRandom->TRandom::Exp(1.);
 
-    EventParticle[i].SetImpulse({Ptot * cos(phi) * sin(theta), Ptot * sin(phi) * sin(theta), Ptot * cos(theta)});
+    EventParticle[i].SetImpulse({Ptot * cos(phi) * sin(theta),
+                                 Ptot * sin(phi) * sin(theta),
+                                 Ptot * cos(theta)});
     double x = gRandom->Rndm();
     if (x < 0.4)
       EventParticle[i].SetIndex("pi+");
@@ -54,26 +57,22 @@ int main()
       EventParticle[i].SetIndex("P+");
     else if (x < 0.99)
       EventParticle[i].SetIndex("P-");
-    else
-    {
+    else {
       EventParticle[i].SetIndex("K*");
-      EventParticle[i].Decay2body(EventParticle[j], EventParticle[j + 1]);
-      if (x < 0.995)
-      {
+      if (x < 0.995) {
         EventParticle[j].SetIndex("pi+");
         EventParticle[j + 1].SetIndex("K-");
-      }
-      else
-      {
+      } else {
         EventParticle[j].SetIndex("K+");
         EventParticle[j + 1].SetIndex("pi-");
       }
+      EventParticle[i].Decay2body(EventParticle[j], EventParticle[j + 1]);
       j += 2;
     }
   }
 
-  std::for_each(EventParticle.begin(), EventParticle.end(), [](const Particle &p)
-                { p.PrintData(); });
+  std::for_each_n(EventParticle.begin(), j,
+                  [](const Particle &p) { p.PrintData(); });
   /*Particle particle1("K+", {2., 4., 1});
   Particle particle2("K*", {1., 0., 3.});
 

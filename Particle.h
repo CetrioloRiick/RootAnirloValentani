@@ -27,7 +27,7 @@ public:
   void SetImpulse(PhysVector pv);
 
   static void PrintParticleTypes();
-  void PrintData() const;
+  void PrintData(char lastChar='\n') const;
 
   static void AddParticleType(const std::string &name, const double mass,
                               const int charge, const double width = 0.);
