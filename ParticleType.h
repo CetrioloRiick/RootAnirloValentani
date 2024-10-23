@@ -8,7 +8,7 @@ public:
   std::string GetName() const;
   double GetMass() const;
   int GetCharge() const;
-  virtual void PrintData() const;
+  virtual void PrintData(char lastChar='\n') const;
 
 private:
   const std::string name_;

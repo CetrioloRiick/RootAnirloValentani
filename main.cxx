@@ -25,7 +25,7 @@ int main() {
   std::cout << "Indice  particle2: " << particle2.GetIndex() << std::endl;
   std::cout << "Impulso particle2: " << particle2.GetImpulse() << std::endl;
   // Particle::GetParticleTypes()[0]->PrintData();
-  // Particle::GetParticleTypes()[1]->PrintData();
+  Particle::GetParticleTypes()[1]->PrintData();
 
   Particle::PrintParticleTypes();
   /*

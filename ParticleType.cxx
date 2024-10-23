@@ -10,9 +10,9 @@ std::string ParticleType::GetName() const { return name_; };
 double ParticleType::GetMass() const { return mass_; };
 int ParticleType::GetCharge() const { return charge_; };
 
-void ParticleType::PrintData() const {
+void ParticleType::PrintData(char lastChar) const {
   std::cout << "name: " << name_ << ", mass: " << mass_
-            << ", charge: " << charge_<< std::endl;
+            << ", charge: " << charge_<< lastChar;
 }
 
 /*
