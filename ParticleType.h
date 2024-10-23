@@ -9,7 +9,7 @@ public:
   double GetMass() const;
   int GetCharge() const;
   double GetWidth() const;
-  virtual void PrintData() const;
+  virtual void PrintData(char lastChar='\n') const;
 
 private:
   const std::string name_;

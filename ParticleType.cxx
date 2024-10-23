@@ -11,9 +11,9 @@ double ParticleType::GetMass() const { return mass_; };
 int ParticleType::GetCharge() const { return charge_; };
 double ParticleType::GetWidth() const {return -1.0;};
 
-void ParticleType::PrintData() const {
+void ParticleType::PrintData(char lastChar) const {
   std::cout << "name: " << name_ << ", mass: " << mass_
-            << ", charge: " << charge_<< std::endl;
+            << ", charge: " << charge_<< lastChar;
 }
 
 /*

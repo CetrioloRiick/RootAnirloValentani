@@ -7,7 +7,7 @@ public:
   ResonanceType(const std::string &name, const double mass,
                     const int charge, const double width);
   double GetWidth() const;
-  void PrintData() const override;
+  void PrintData(char lastChar='\n') const override;
 
 private:
   const double width_;

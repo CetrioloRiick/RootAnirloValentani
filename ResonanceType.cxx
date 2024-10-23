@@ -8,9 +8,9 @@ ResonanceType::ResonanceType(const std::string &name, const double mass,
 
 double ResonanceType::GetWidth() const { return width_; };
 
-void ResonanceType::PrintData() const {
-  ParticleType::PrintData();
-  std::cout << ", width: " << width_ << std::endl;
+void ResonanceType::PrintData(char lastChar) const {
+  ParticleType::PrintData('\0');
+  std::cout << ", width: " << width_ << lastChar;
 }
 
 /*
