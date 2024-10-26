@@ -2,7 +2,6 @@
 #include "TMath.h"
 #include "TRandom.h"
 #include <algorithm>
-#include <iostream>
 
 /* int main()
 {
