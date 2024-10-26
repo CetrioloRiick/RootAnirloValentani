@@ -2,6 +2,7 @@
 #include "TMath.h"
 #include "TRandom.h"
 #include <algorithm>
+#include <vector>
 
 /* int main()
 {
@@ -24,6 +25,7 @@ int main() {
   Particle::AddParticleType("K+", 0.49367, 1);
   Particle::AddParticleType("K-", 0.49367, -1);
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
+  Particle::SetTypesProbability({400, 400, 50, 50,45, 45, 10});
   Particle::PrintParticleTypes();
 
   Particle particle2("K*", {1., 0., 3.});
@@ -33,8 +35,11 @@ int main() {
   const int N{nGen + 20};
 
   std::array<Particle, N> EventParticle{};
+
+
+
   // double theta = 0., phi = 0., Ptot;
-  int j{nGen};
+ /* int j{nGen};
 
   // Funzione per generare casualmente impulso in direzioni casuali
   auto generateImpulse = [&]() -> PhysVector {
@@ -82,7 +87,7 @@ int main() {
       p.Decay2body(EventParticle[j], EventParticle[j + 1]);
       j += 2; // Avanzare il contatore per gli eventi successivi
     }
-  });
+  });*/
 
   /*
 
@@ -125,7 +130,7 @@ int main() {
                     */
 
 
-  std::for_each_n(EventParticle.begin(), j,
+  std::for_each_n(EventParticle.begin(), N,
                   [](const Particle &p) { p.PrintData(); });
   /*Particle particle1("K+", {2., 4., 1});
   Particle particle2("K*", {1., 0., 3.});

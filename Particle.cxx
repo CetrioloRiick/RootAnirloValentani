@@ -1,12 +1,17 @@
 #include "Particle.h"
 #include "ParticleType.h"
 #include "ResonanceType.h"
+#include "TMath.h"
+#include "TRandom.h"
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstdlib> //for RAND_MAX
 #include <iostream>
+#include <numeric>
 
 std::vector<ParticleType *> Particle::particleTypes_;
+std::vector<int> Particle::typesProbability_;
 
 PhysVector PhysVector::operator+(const PhysVector &pv) const {
   return {x + pv.x, y + pv.y, z + pv.z};
@@ -19,7 +24,33 @@ double PhysVector::operator*(const PhysVector &pv) const {
 PhysVector operator*(double scalar, const PhysVector &pv) {
   return {scalar * pv.x, scalar * pv.y, scalar * pv.z};
 }
-Particle::Particle() {};
+Particle::Particle() {
+
+  auto generateImpulse = [&]() -> PhysVector {
+    double theta = gRandom->TRandom::Uniform(0, TMath::Pi());
+    double phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
+    double Ptot = gRandom->TRandom::Exp(1.);
+
+    return Ptot *
+           PhysVector{cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)};
+  };
+
+  auto generateParticleName = [&]() {
+    double x = gRandom->TRandom::Uniform(0, 1000); //Da risolvere questa roba dei mille
+    int maxNum{static_cast<int>(particleTypes_.size())};
+    int sum{0};
+    for (int i{0}; i != maxNum; ++i) {
+      sum += typesProbability_[i];
+      if (x <= sum) {
+        SetIndex(i);
+        break;
+      }
+    }
+  };
+
+  SetImpulse(generateImpulse());
+  generateParticleName();
+};
 
 Particle::Particle(const std::string &name, PhysVector impulse)
     : index_(FindParticle(name)), impulse_(impulse) {}
@@ -76,6 +107,13 @@ void Particle::AddParticleType(const std::string &name, const double mass,
   } else {
     std::cout << "Particle " << name << " already present" << std::endl;
   }
+}
+
+void Particle::SetTypesProbability(const std::vector<int> &typesProbability) {
+  typesProbability_ = typesProbability;
+  assert(typesProbability_.size() == particleTypes_.size());
+  assert(std::accumulate(typesProbability_.begin(), typesProbability_.end(),
+                         0) == 1000);
 }
 
 void Particle::PrintParticleTypes() {

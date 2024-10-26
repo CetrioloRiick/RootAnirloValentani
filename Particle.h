@@ -28,14 +28,15 @@ public:
   void SetImpulse(PhysVector pv);
 
   static void PrintParticleTypes();
-  void PrintData(char lastChar='\n') const;
+  void PrintData(char lastChar = '\n') const;
 
   static void AddParticleType(const std::string &name, const double mass,
                               const int charge, const double width = 0.);
+  static void SetTypesProbability(const std::vector<int> &typesProbability);
 
   double InvMass(Particle &p) const;
 
-  int Decay2body(Particle &dau1,Particle &dau2) const;
+  int Decay2body(Particle &dau1, Particle &dau2) const;
 
 private:
   static int FindParticle(const std::string &name);
@@ -43,6 +44,7 @@ private:
   int index_;
   PhysVector impulse_;
   static std::vector<ParticleType *> particleTypes_;
+  static std::vector<int> typesProbability_;
   void Boost(double bx, double by, double bz);
 };
 
