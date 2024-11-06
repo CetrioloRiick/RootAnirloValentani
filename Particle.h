@@ -22,6 +22,8 @@ public:
   static std::vector<ParticleType *> GetParticleTypes();
   double GetMass() const;
   double GetEnergy() const;
+  int GetCharge() const;
+  std::string GetParticleName() const;
 
   void SetIndex(int index);
   void SetIndex(const std::string &name);

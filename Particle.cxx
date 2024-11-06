@@ -49,6 +49,13 @@ double Particle::GetMass() const { return particleTypes_[index_]->GetMass(); }
 double Particle::GetEnergy() const {
   return std::sqrt(std::pow(GetMass(), 2) + (impulse_ * impulse_));
 }
+int Particle::GetCharge() const{
+  return particleTypes_[GetIndex()]->GetCharge();
+}
+
+std::string Particle::GetParticleName() const{
+  return particleTypes_[index_]->GetName();
+}
 
 void Particle::SetIndex(int index) {
   if (index >= 0 && index < static_cast<int>(particleTypes_.size())) {

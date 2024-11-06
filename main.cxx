@@ -1,7 +1,13 @@
 #include "Particle.h"
+#include "TCanvas.h"
+#include "TH1F.h"
+#include "TH2F.h"
 #include "TMath.h"
 #include "TRandom.h"
+#include <TApplication.h>
+#include <TH1.h>
 #include <algorithm>
+#include <iostream>
 
 /* int main()
 {
@@ -16,7 +22,9 @@
     return 0;
 } */
 
-int main() {
+int main(int argc, char **argv) {
+  TApplication app("app", &argc, argv);
+
   Particle::AddParticleType("pi+", 0.13957, 1);
   Particle::AddParticleType("pi-", 0.13957, -1);
   Particle::AddParticleType("P+", 0.93827, 1);
@@ -31,69 +39,145 @@ int main() {
   // particle2.SetImpulse({1, 1, 1});
   const int nGen{100};
   const int N{nGen + 20};
+  const int nEvents{1000};
+  int j;
+  TH1F *hTypes = new TH1F("hTypes", "particle numbers", 7, 0, 7);
+  TH2F *hAngles =
+      new TH2F("hAngles", "", 1000, 0, TMath::Pi(), 1000, 0, 2 * TMath::Pi());
+  TH1F *hImpulse = new TH1F("hImpulse", "", 1000, 0, 10);
+  TH1F *hEnergy = new TH1F("hEnergy", "", 1000, 0, 10);
+  TH1F *hTransversImpulse = new TH1F("hTransversImpulse", "", 40, 0, 3);
+  TH1F *hInvariantMass = new TH1F("hInvariantMass", "", 1000, 0, 10);
+  TH1F *hInvariantMassDiscCharge =
+      new TH1F("hInvariantMassDiscCharge", "", 1000, 0, 10);
+  TH1F *hInvariantMassConcCharge =
+      new TH1F("hInvariantMassConcCharge", "", 1000, 0, 10);
+  TH1F *hInvariantMassKPConc=
+      new TH1F("hInvariantMassKPConc", "", 1000, 0, 10);
+  TH1F *hInvariantMassKPDisc=
+      new TH1F("hInvariantMassKPDisc", "", 1000, 0, 10);
 
-  std::array<Particle, N> EventParticle{};
-  // double theta = 0., phi = 0., Ptot;
-  int j{nGen};
+  gRandom->SetSeed();
+  for (int i{nEvents}; i != 0; --i) {
 
-  // Funzione per generare casualmente impulso in direzioni casuali
-  auto generateImpulse = [&]() -> PhysVector {
-    double theta = gRandom->TRandom::Uniform(0, TMath::Pi());
-    double phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
-    double Ptot = gRandom->TRandom::Exp(1.);
+    std::array<Particle, N> EventParticle{};
+    // double theta = 0., phi = 0., Ptot;
+    j = nGen;
 
-    return Ptot *
-           PhysVector{cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)};
-  };
+    // Funzione per generare casualmente impulso in direzioni casuali
+    auto generateImpulse = [&]() -> PhysVector {
+      double theta = gRandom->TRandom::Uniform(0, TMath::Pi());
+      double phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
+      double Ptot = gRandom->TRandom::Exp(1.);
+      hAngles->Fill(theta, phi);
+      hImpulse->Fill(Ptot);
 
-  // Funzione per determinare l'indice della particella in base a x
-  auto generateParticleName = [&](double x) -> std::string {
-    if (x < 0.4)
-      return "pi+";
-    if (x < 0.8)
-      return "pi-";
-    if (x < 0.85)
-      return "K+";
-    if (x < 0.9)
-      return "K-";
-    if (x < 0.945)
-      return "P+";
-    if (x < 0.99)
-      return "P-";
-    return "K*";
-  };
+      return Ptot * PhysVector{cos(phi) * sin(theta), sin(phi) * sin(theta),
+                               cos(theta)};
+    };
 
-  // Iterazione sugli eventi
-  std::for_each_n(EventParticle.begin(), nGen, [&](Particle &p) {
-    p.SetImpulse(generateImpulse());
+    // Funzione per determinare l'indice della particella in base a x
+    auto generateParticleName = [&](double x) -> std::string {
+      if (x < 0.4)
+        return "pi+";
+      if (x < 0.8)
+        return "pi-";
+      if (x < 0.85)
+        return "K+";
+      if (x < 0.9)
+        return "K-";
+      if (x < 0.945)
+        return "P+";
+      if (x < 0.99)
+        return "P-";
+      return "K*";
+    };
 
-    double x = gRandom->Rndm();
-    std::string name = generateParticleName(x);
-    p.SetIndex(name);
+    // Iterazione sugli eventi
+    std::for_each_n(EventParticle.begin(), nGen, [&](Particle &p) {
+      p.SetImpulse(generateImpulse());
 
-    if (name == "K*") {
-      if (x < 0.995) {
-        EventParticle[j].SetIndex("pi+");
-        EventParticle[j + 1].SetIndex("K-");
-      } else {
-        EventParticle[j].SetIndex("K+");
-        EventParticle[j + 1].SetIndex("pi-");
+      double x = gRandom->Rndm();
+      std::string name = generateParticleName(x);
+      p.SetIndex(name);
+
+      if (name == "K*") {
+        if (x < 0.995) {
+          EventParticle[j].SetIndex("pi+");
+          EventParticle[j + 1].SetIndex("K-");
+          hTypes->Fill(p.GetIndex());
+
+        } else {
+          EventParticle[j].SetIndex("K+");
+          EventParticle[j + 1].SetIndex("pi-");
+          hTypes->Fill(p.GetIndex());
+        }
+        p.Decay2body(EventParticle[j], EventParticle[j + 1]);
+        j += 2; // Avanzare il contatore per gli eventi successivi
       }
-      p.Decay2body(EventParticle[j], EventParticle[j + 1]);
-      j += 2; // Avanzare il contatore per gli eventi successivi
+
+      hTypes->Fill(p.GetIndex());
+
+      double It{std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2)};
+      hTransversImpulse->Fill(It);
+
+      hEnergy->Fill(p.GetEnergy());
+    });
+
+    double papaFrancesco;
+    for (int s{0}; s != j - 1; ++s) {
+      for (int k{s + 1}; k != j - 1; ++k) {
+        papaFrancesco = EventParticle[s].InvMass(EventParticle[k]);
+        std::cout << s << " - " << k << " " << papaFrancesco << '\n';
+        hInvariantMass->Fill(papaFrancesco);
+        if (EventParticle[s].GetCharge() * EventParticle[k].GetCharge() == -1) {
+          hInvariantMassDiscCharge->Fill(papaFrancesco);
+        } else if (EventParticle[s].GetCharge() *
+                       EventParticle[k].GetCharge() ==
+                   1) {
+          hInvariantMassConcCharge->Fill(papaFrancesco);
+        } 
+        if ((EventParticle[s].GetParticleName()=="K+"&& EventParticle[k].GetParticleName()=="P-" )|| (EventParticle[s].GetParticleName()=="K-"&& EventParticle[k].GetParticleName()=="P+" )){
+          hInvariantMassKPDisc ->Fill(papaFrancesco);
+        }
+        if ((EventParticle[s].GetParticleName()=="K+"&& EventParticle[k].GetParticleName()=="P+" )|| (EventParticle[s].GetParticleName()=="K-"&& EventParticle[k].GetParticleName()=="P-" )){
+          hInvariantMassKPConc ->Fill(papaFrancesco);
+        }
+      }
     }
-  });
+  }
+
+  TCanvas *c1 = new TCanvas("c1", "Generated Particles", 200, 10, 600, 400);
+  hTypes->Draw();
+  TCanvas *c2 = new TCanvas("c2", "Theta Phi correlation", 200, 10, 600, 400);
+  hAngles->Draw("LEGO1");
+  TCanvas *c3 = new TCanvas("c3", "Particle Energy", 200, 10, 600, 400);
+  hEnergy->Draw();
+  TCanvas *c4 = new TCanvas("c4", "Impulse", 200, 10, 600, 400);
+  hImpulse->Draw();
+  TCanvas *c5 = new TCanvas("c5", "Tranverse Impulse", 200, 10, 600, 400);
+  hTransversImpulse->Draw();
+  TCanvas *c6 = new TCanvas("c6", "Invariant Mass", 200, 10, 600, 400);
+  hInvariantMass->Draw();
+  TCanvas *c7 = new TCanvas("c7", "Invariant Mass", 200, 10, 600, 400);
+  hInvariantMassDiscCharge->Draw();
+  TCanvas *c8 = new TCanvas("c8", "Invariant Mass", 200, 10, 600, 400);
+  hInvariantMassConcCharge->Draw();
+  TCanvas *c9 = new TCanvas("c9", "Invariant Mass", 200, 10, 600, 400);
+  hInvariantMassKPDisc->Draw();
+  TCanvas *c10 = new TCanvas("c10", "Invariant Mass", 200, 10, 600, 400);
+  hInvariantMassKPConc->Draw();
 
   /*
 
     std::for_each_n(EventParticle.begin(), nGen,
                     [&](Particle &p) { // Sarebbe meglio mettere generate
                       theta = gRandom->TRandom::Uniform(0, TMath::Pi());
-                      phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
+                     c1 phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
                       Ptot = gRandom->TRandom::Exp(1.);
 
                       p.SetImpulse(Ptot * PhysVector{cos(phi) * sin(theta),
-                                                     sin(phi) * sin(theta),
+                     c1                                sin(phi) * sin(theta),
                                                      cos(theta)});
                       double x = gRandom->Rndm();
                       if (x < 0.4)
@@ -124,9 +208,6 @@ int main() {
 
                     */
 
-
-  std::for_each_n(EventParticle.begin(), j,
-                  [](const Particle &p) { p.PrintData(); });
   /*Particle particle1("K+", {2., 4., 1});
   Particle particle2("K*", {1., 0., 3.});
 
@@ -161,4 +242,5 @@ int main() {
   */
   // Particle::GetParticleTypes()[0]->PrintData();
   // Particle::GetParticleTypes()[1]->GetWidth();
+  app.Run();
 }
