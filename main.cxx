@@ -5,6 +5,7 @@
 #include "TMath.h"
 #include "TRandom.h"
 #include <TApplication.h>
+#include <TFile.h>
 #include <TH1.h>
 #include <algorithm>
 #include <iostream>
@@ -39,7 +40,7 @@ int main(int argc, char **argv) {
   // particle2.SetImpulse({1, 1, 1});
   const int nGen{100};
   const int N{nGen + 20};
-  const int nEvents{1000};
+  const int nEvents{10000};
   int j;
   TH1F *hTypes = new TH1F("hTypes", "particle numbers", 7, 0, 7);
   TH2F *hAngles =
@@ -52,10 +53,11 @@ int main(int argc, char **argv) {
       new TH1F("hInvariantMassDiscCharge", "", 1000, 0, 10);
   TH1F *hInvariantMassConcCharge =
       new TH1F("hInvariantMassConcCharge", "", 1000, 0, 10);
-  TH1F *hInvariantMassKPConc=
+  TH1F *hInvariantMassKPConc =
       new TH1F("hInvariantMassKPConc", "", 1000, 0, 10);
-  TH1F *hInvariantMassKPDisc=
+  TH1F *hInvariantMassKPDisc =
       new TH1F("hInvariantMassKPDisc", "", 1000, 0, 10);
+  TH1F *hInvariantMassDecad = new TH1F("hInvariantMassDecad", "", 200, 0, 2);
 
   gRandom->SetSeed();
   for (int i{nEvents}; i != 0; --i) {
@@ -113,6 +115,9 @@ int main(int argc, char **argv) {
           hTypes->Fill(p.GetIndex());
         }
         p.Decay2body(EventParticle[j], EventParticle[j + 1]);
+        hInvariantMassDecad->Fill(
+            EventParticle[j].InvMass(EventParticle[j + 1]));
+
         j += 2; // Avanzare il contatore per gli eventi successivi
       }
 
@@ -128,7 +133,7 @@ int main(int argc, char **argv) {
     for (int s{0}; s != j - 1; ++s) {
       for (int k{s + 1}; k != j - 1; ++k) {
         papaFrancesco = EventParticle[s].InvMass(EventParticle[k]);
-        std::cout << s << " - " << k << " " << papaFrancesco << '\n';
+        // std::cout << s << " - " << k << " " << papaFrancesco << '\n';
         hInvariantMass->Fill(papaFrancesco);
         if (EventParticle[s].GetCharge() * EventParticle[k].GetCharge() == -1) {
           hInvariantMassDiscCharge->Fill(papaFrancesco);
@@ -136,12 +141,18 @@ int main(int argc, char **argv) {
                        EventParticle[k].GetCharge() ==
                    1) {
           hInvariantMassConcCharge->Fill(papaFrancesco);
-        } 
-        if ((EventParticle[s].GetParticleName()=="K+"&& EventParticle[k].GetParticleName()=="P-" )|| (EventParticle[s].GetParticleName()=="K-"&& EventParticle[k].GetParticleName()=="P+" )){
-          hInvariantMassKPDisc ->Fill(papaFrancesco);
         }
-        if ((EventParticle[s].GetParticleName()=="K+"&& EventParticle[k].GetParticleName()=="P+" )|| (EventParticle[s].GetParticleName()=="K-"&& EventParticle[k].GetParticleName()=="P-" )){
-          hInvariantMassKPConc ->Fill(papaFrancesco);
+        if ((EventParticle[s].GetParticleName() == "K+" &&
+             EventParticle[k].GetParticleName() == "P-") ||
+            (EventParticle[s].GetParticleName() == "K-" &&
+             EventParticle[k].GetParticleName() == "P+")) {
+          hInvariantMassKPDisc->Fill(papaFrancesco);
+        }
+        if ((EventParticle[s].GetParticleName() == "K+" &&
+             EventParticle[k].GetParticleName() == "P+") ||
+            (EventParticle[s].GetParticleName() == "K-" &&
+             EventParticle[k].GetParticleName() == "P-")) {
+          hInvariantMassKPConc->Fill(papaFrancesco);
         }
       }
     }
@@ -157,16 +168,22 @@ int main(int argc, char **argv) {
   hImpulse->Draw();
   TCanvas *c5 = new TCanvas("c5", "Tranverse Impulse", 200, 10, 600, 400);
   hTransversImpulse->Draw();
-  TCanvas *c6 = new TCanvas("c6", "Invariant Mass", 200, 10, 600, 400);
+  TCanvas *c6 = new TCanvas("c6", "Invariant Mass Total", 200, 10, 600, 400);
   hInvariantMass->Draw();
-  TCanvas *c7 = new TCanvas("c7", "Invariant Mass", 200, 10, 600, 400);
+  TCanvas *c7 =
+      new TCanvas("c7", "Invariant Mass All Discord", 200, 10, 600, 400);
   hInvariantMassDiscCharge->Draw();
-  TCanvas *c8 = new TCanvas("c8", "Invariant Mass", 200, 10, 600, 400);
+  TCanvas *c8 =
+      new TCanvas("c8", "Invariant Mass Alll Concord", 200, 10, 600, 400);
   hInvariantMassConcCharge->Draw();
-  TCanvas *c9 = new TCanvas("c9", "Invariant Mass", 200, 10, 600, 400);
+  TCanvas *c9 = new TCanvas(
+      "c9", "Invariant Mass pione+/Kaone- e pione-/Kaone+", 200, 10, 600, 400);
   hInvariantMassKPDisc->Draw();
-  TCanvas *c10 = new TCanvas("c10", "Invariant Mass", 200, 10, 600, 400);
+  TCanvas *c10 = new TCanvas(
+      "c10", "Invariant Mass pione+/Kaone+ e pione-/Kaone-", 200, 10, 600, 400);
   hInvariantMassKPConc->Draw();
+  TCanvas *c11 = new TCanvas("c11", "Invariant Mass Decad", 200, 10, 600, 400);
+  hInvariantMassDecad->Draw();
 
   /*
 
@@ -242,5 +259,9 @@ int main(int argc, char **argv) {
   */
   // Particle::GetParticleTypes()[0]->PrintData();
   // Particle::GetParticleTypes()[1]->GetWidth();
+
+  TFile *outputFile = new TFile("output_histograms.root", "RECREATE");
+  outputFile->Write();
+  outputFile->Close();
   app.Run();
 }

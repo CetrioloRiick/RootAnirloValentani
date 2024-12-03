@@ -33,6 +33,7 @@
 
 #Roba di ROOT
 *.pcm
+*.root
 
 #Roba di Carlo
 .vscode/
