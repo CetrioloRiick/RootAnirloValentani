@@ -40,26 +40,30 @@ int main(int argc, char **argv) {
   // particle2.SetImpulse({1, 1, 1});
   const int nGen{100};
   const int N{nGen + 20};
-  const int nEvents{10000};
+  const int nEvents{10000}; // aggiungere 2 zeri
   int j;
   TH1F *hTypes = new TH1F("hTypes", "particle numbers", 7, 0, 7);
   TH2F *hAngles =
-      new TH2F("hAngles", "", 1000, 0, TMath::Pi(), 1000, 0, 2 * TMath::Pi());
+      new TH2F("hAngles", "", 100, 0, TMath::Pi(), 100, 0, 2 * TMath::Pi());
   TH1F *hImpulse = new TH1F("hImpulse", "", 1000, 0, 10);
   TH1F *hEnergy = new TH1F("hEnergy", "", 1000, 0, 10);
   TH1F *hTransversImpulse = new TH1F("hTransversImpulse", "", 40, 0, 3);
   TH1F *hInvariantMass = new TH1F("hInvariantMass", "", 1000, 0, 10);
   TH1F *hInvariantMassDiscCharge =
       new TH1F("hInvariantMassDiscCharge", "", 1000, 0, 10);
+  hInvariantMassDiscCharge->Sumw2();
   TH1F *hInvariantMassConcCharge =
       new TH1F("hInvariantMassConcCharge", "", 1000, 0, 10);
-  TH1F *hInvariantMassKPConc =
-      new TH1F("hInvariantMassKPConc", "", 1000, 0, 10);
-  TH1F *hInvariantMassKPDisc =
-      new TH1F("hInvariantMassKPDisc", "", 1000, 0, 10);
+  hInvariantMassConcCharge->Sumw2();
+  TH1F *hInvariantMassKPConc = new TH1F("hInvariantMassKPConc", "", 1000, 0, 10);
+  hInvariantMassKPConc->Sumw2();
+  TH1F *hInvariantMassKPDisc = new TH1F("hInvariantMassKPDisc", "", 1000, 0, 10);
+  hInvariantMassKPDisc->Sumw2();
   TH1F *hInvariantMassDecad = new TH1F("hInvariantMassDecad", "", 200, 0, 2);
 
   gRandom->SetSeed();
+  double controllo{0};
+
   for (int i{nEvents}; i != 0; --i) {
 
     std::array<Particle, N> EventParticle{};
@@ -107,12 +111,12 @@ int main(int argc, char **argv) {
         if (x < 0.995) {
           EventParticle[j].SetIndex("pi+");
           EventParticle[j + 1].SetIndex("K-");
-          hTypes->Fill(p.GetIndex());
+          // hTypes->Fill(p.GetIndex());
 
         } else {
           EventParticle[j].SetIndex("K+");
           EventParticle[j + 1].SetIndex("pi-");
-          hTypes->Fill(p.GetIndex());
+          // hTypes->Fill(p.GetIndex());
         }
         p.Decay2body(EventParticle[j], EventParticle[j + 1]);
         hInvariantMassDecad->Fill(
@@ -132,6 +136,7 @@ int main(int argc, char **argv) {
     double papaFrancesco;
     for (int s{0}; s != j - 1; ++s) {
       for (int k{s + 1}; k != j - 1; ++k) {
+        controllo++;
         papaFrancesco = EventParticle[s].InvMass(EventParticle[k]);
         // std::cout << s << " - " << k << " " << papaFrancesco << '\n';
         hInvariantMass->Fill(papaFrancesco);
@@ -157,6 +162,7 @@ int main(int argc, char **argv) {
       }
     }
   }
+    std::cout << "\n\n\n\n" << controllo << "\n\n\n";
 
   TCanvas *c1 = new TCanvas("c1", "Generated Particles", 200, 10, 600, 400);
   hTypes->Draw();
@@ -261,7 +267,17 @@ int main(int argc, char **argv) {
   // Particle::GetParticleTypes()[1]->GetWidth();
 
   TFile *outputFile = new TFile("output_histograms.root", "RECREATE");
-  outputFile->Write();
+  hTypes->Write();
+  hAngles->Write();
+  hImpulse->Write();
+  hEnergy->Write();
+  hTransversImpulse->Write();
+  hInvariantMass->Write();
+  hInvariantMassDiscCharge->Write();
+  hInvariantMassConcCharge->Write();
+  hInvariantMassKPConc->Write();
+  hInvariantMassKPDisc->Write();
+  hInvariantMassDecad->Write();
   outputFile->Close();
   app.Run();
 }
