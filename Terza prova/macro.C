@@ -11,7 +11,7 @@ bool inRange(double start, double stop, double value){
 }
 
 void macro(){
-    TFile *inputFile= new TFile("CHIAMAMI-COSI.root");
+    TFile *inputFile= new TFile("output_histograms.root");
 
     TH1F *hTypes=(TH1F*)inputFile->Get("hTypes");
     TCanvas *c0 = new TCanvas("c0", "aaa", 200, 10, 600, 400);
@@ -108,7 +108,7 @@ Stampare a schermo i valori dei parametri chiesti*/
     TH1F *h5=(TH1F*)inputFile->Get("hInvariantMassDecad");
     
 
-    TH1F *sub12= new TH1F("sub12", "sub12", 1000, 0, 10);
+    TH1F *sub12= new TH1F("sub12", "sub12", 500, 0, 2);
     sub12->Add(h1, 1);
     sub12->Add(h2, -1);
 
@@ -117,7 +117,7 @@ Stampare a schermo i valori dei parametri chiesti*/
 
 
 
-    TH1F *sub34= new TH1F("sub34", "sub34", 1000, 0, 10);
+    TH1F *sub34= new TH1F("sub34", "sub34", 500, 0, 2);
     sub34->Add(h3, 1);
     sub34->Add(h4, -1);
 
