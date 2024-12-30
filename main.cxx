@@ -23,9 +23,9 @@ int main(int argc, char **argv) {
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
   Particle::PrintParticleTypes();
 
-  const Int_t nGen{100};      // Particelle generate sicuramente
-  const Int_t N{nGen + 20};   // Particelle massime generabili (lunghezza array)
-  const Int_t nEvents{10000}; // Numero eventi, per ora meno
+  const Int_t nGen{100};    // Particelle generate sicuramente
+  const Int_t N{nGen + 20}; // Particelle massime generabili (lunghezza array)
+  const Int_t nEvents{10000};
   Int_t j; // Contatore per numero di particelle generate effettive
 
   // Creazione di tutti gli istogrammi
@@ -51,7 +51,6 @@ int main(int argc, char **argv) {
   gRandom->SetSeed(); // SetSeed per l'estrazione casuale
 
   for (Int_t i{nEvents}; i != 0; --i) {
-
     std::array<Particle, N> EventPart{};
     j = nGen;
 
@@ -111,7 +110,8 @@ int main(int argc, char **argv) {
 
       // Fill di 3 istogrammi
       hTypes->Fill(p.GetIndex());
-      Double_t It{std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2)};
+      Double_t It{std::pow(p.GetImpulse().x, 2) +
+                  std::pow(p.GetImpulse().y, 2)};
       hTransversImpulse->Fill(It);
       hEnergy->Fill(p.GetEnergy());
     });
@@ -121,8 +121,8 @@ int main(int argc, char **argv) {
     for (Int_t s{0}; s != j; ++s) {
       // Primo ciclo che itera su tutte le particelle
       for (Int_t k{s + 1}; k != j; ++k) {
-        // Secondo ciclo che parte dalla particella a cui è arrivato il primo e
-        // arriva fino alla fine
+        // Secondo ciclo che parte dalla particella a cui è arrivato il primo
+        // e arriva fino alla fine
         invMass = EventPart[s].InvMass(EventPart[k]);
         hInvariantMass->Fill(invMass);
 
