@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 
   for (int i{nEvents}; i != 0; --i) {
 
-    std::array<Particle, N> EventParticle{};
+    std::array<Particle, N> EventPart{};
     j = nGen;
 
     // Funzione lambda per generare casualmente impulso in direzioni casuali
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
     };
 
     // Iterazione sugli eventi, attraverso l'algoritmo (come un for) for_each_n
-    std::for_each_n(EventParticle.begin(), nGen, [&](Particle &p) {
+    std::for_each_n(EventPart.begin(), nGen, [&](Particle &p) {
       // p assume in ogni iterazione è una particella "vuota" dell'array
       p.SetImpulse(generateImpulse());
 
@@ -97,50 +97,51 @@ int main(int argc, char **argv) {
       // stesso x che usiamo nella generazione) la facciamo decadere
       if (name == "K*") {
         if (x < 0.995) {
-          EventParticle[j].SetIndex("pi+");
-          EventParticle[j + 1].SetIndex("K-");
+          EventPart[j].SetIndex("pi+");
+          EventPart[j + 1].SetIndex("K-");
         } else {
-          EventParticle[j].SetIndex("K+");
-          EventParticle[j + 1].SetIndex("pi-");
+          EventPart[j].SetIndex("K+");
+          EventPart[j + 1].SetIndex("pi-");
         }
-        p.Decay2body(EventParticle[j], EventParticle[j + 1]);
-        hInvariantMassDecad->Fill(
-            EventParticle[j].InvMass(EventParticle[j + 1]));
+        p.Decay2body(EventPart[j], EventPart[j + 1]);
+        hInvariantMassDecad->Fill(EventPart[j].InvMass(EventPart[j + 1]));
 
         j += 2; // Avanzare il contatore per gli eventi successivi
       }
 
+      // Fill di 3 istogrammi
       hTypes->Fill(p.GetIndex());
-
-      
       double It{std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2)};
       hTransversImpulse->Fill(It);
-
       hEnergy->Fill(p.GetEnergy());
     });
 
+    // Calcolo e Fill degli istogrammi di massa invariante
     double invMass;
     for (int s{0}; s != j; ++s) {
-      for (int k{s + 1}; k != s + 10 && k != j; ++k) {
-        invMass = EventParticle[s].InvMass(EventParticle[k]);
+      // Primo ciclo che itera su tutte le particelle
+      for (int k{s + 1}; k != j; ++k) {
+        // Secondo ciclo che parte dalla particella a cui è arrivato il primo e
+        // arriva fino alla fine
+        invMass = EventPart[s].InvMass(EventPart[k]);
         hInvariantMass->Fill(invMass);
-        if (EventParticle[s].GetCharge() * EventParticle[k].GetCharge() == -1) {
+
+        // Fill degli istogrammi
+        if (EventPart[s].GetCharge() * EventPart[k].GetCharge() == -1) {
           hInvariantMassDiscCharge->Fill(invMass);
-        } else if (EventParticle[s].GetCharge() *
-                       EventParticle[k].GetCharge() ==
-                   1) {
+        } else if (EventPart[s].GetCharge() * EventPart[k].GetCharge() == 1) {
           hInvariantMassConcCharge->Fill(invMass);
         }
-        if ((EventParticle[s].GetParticleName() == "K+" &&
-             EventParticle[k].GetParticleName() == "pi-") ||
-            (EventParticle[s].GetParticleName() == "K-" &&
-             EventParticle[k].GetParticleName() == "pi+")) {
+        if ((EventPart[s].GetParticleName() == "K+" &&
+             EventPart[k].GetParticleName() == "pi-") ||
+            (EventPart[s].GetParticleName() == "K-" &&
+             EventPart[k].GetParticleName() == "pi+")) {
           hInvariantMassKPDisc->Fill(invMass);
         }
-        if ((EventParticle[s].GetParticleName() == "K+" &&
-             EventParticle[k].GetParticleName() == "pi+") ||
-            (EventParticle[s].GetParticleName() == "K-" &&
-             EventParticle[k].GetParticleName() == "pi-")) {
+        if ((EventPart[s].GetParticleName() == "K+" &&
+             EventPart[k].GetParticleName() == "pi+") ||
+            (EventPart[s].GetParticleName() == "K-" &&
+             EventPart[k].GetParticleName() == "pi-")) {
           hInvariantMassKPConc->Fill(invMass);
         }
       }
@@ -175,6 +176,7 @@ int main(int argc, char **argv) {
   TCanvas *c11 = new TCanvas("c11", "Invariant Mass Decad", 200, 10, 600, 400);
   hInvariantMassDecad->Draw();
 
+  // Salvataggio dei grafici sul file root
   TFile *outputFile = new TFile("output_histograms.root", "RECREATE");
   hTypes->Write();
   hAngles->Write();
