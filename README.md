@@ -5,7 +5,7 @@
 
 Per compilare la su bash utilizzare il comando
 ```sh
-g++ -Wall -Wextra main.cxx Particle.cxx ResonanceType.cxx ParticleType.cxx -pthread -std=c++17 -m64 -L/usr/lib/root -lCore -lImt -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lROOTVecOps -lTree -lTreePlayer -lRint -lPostscript -lMatrix -lPhysicslMathCore -lThread -lMultiProc -lROOTDataFrame -pthread -lm -ldl -rdynamic
+g++ -Wall -Wextra main.cxx Particle.cxx ResonanceType.cxx ParticleType.cxx `root-config --cflags --glibs`
 ```
 per tutte le altre shell (come fish o zsh)
 ```sh
