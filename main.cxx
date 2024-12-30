@@ -23,10 +23,10 @@ int main(int argc, char **argv) {
   Particle::AddParticleType("K*", 0.89166, 0, 0.050);
   Particle::PrintParticleTypes();
 
-  const int nGen{100};      // Particelle generate sicuramente
-  const int N{nGen + 20};   // Particelle massime generabili (lunghezza array)
-  const int nEvents{10000}; // Numero eventi, per ora meno
-  int j; // Contatore per numero di particelle generate effettive
+  const Int_t nGen{100};      // Particelle generate sicuramente
+  const Int_t N{nGen + 20};   // Particelle massime generabili (lunghezza array)
+  const Int_t nEvents{10000}; // Numero eventi, per ora meno
+  Int_t j; // Contatore per numero di particelle generate effettive
 
   // Creazione di tutti gli istogrammi
   TH1F *hTypes = new TH1F("hTypes", "particle numbers", 7, 0, 7);
@@ -50,16 +50,16 @@ int main(int argc, char **argv) {
 
   gRandom->SetSeed(); // SetSeed per l'estrazione casuale
 
-  for (int i{nEvents}; i != 0; --i) {
+  for (Int_t i{nEvents}; i != 0; --i) {
 
     std::array<Particle, N> EventPart{};
     j = nGen;
 
     // Funzione lambda per generare casualmente impulso in direzioni casuali
     auto generateImpulse = [&]() -> PhysVector {
-      double theta = gRandom->TRandom::Uniform(0, TMath::Pi());
-      double phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
-      double Ptot = gRandom->TRandom::Exp(1.);
+      Double_t theta = gRandom->TRandom::Uniform(0, TMath::Pi());
+      Double_t phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
+      Double_t Ptot = gRandom->TRandom::Exp(1.);
       hAngles->Fill(theta, phi);
       hImpulse->Fill(Ptot);
 
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
     };
 
     // Funzione lambda per determinare l'indice della particella in base a x
-    auto generateParticleName = [&](double x) -> std::string {
+    auto generateParticleName = [&](Double_t x) -> std::string {
       if (x < 0.4)
         return "pi+";
       if (x < 0.8)
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
       // p assume in ogni iterazione è una particella "vuota" dell'array
       p.SetImpulse(generateImpulse());
 
-      double x = gRandom->Rndm();
+      Double_t x = gRandom->Rndm();
       std::string name = generateParticleName(x);
       p.SetIndex(name);
 
@@ -111,16 +111,16 @@ int main(int argc, char **argv) {
 
       // Fill di 3 istogrammi
       hTypes->Fill(p.GetIndex());
-      double It{std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2)};
+      Double_t It{std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2)};
       hTransversImpulse->Fill(It);
       hEnergy->Fill(p.GetEnergy());
     });
 
     // Calcolo e Fill degli istogrammi di massa invariante
-    double invMass;
-    for (int s{0}; s != j; ++s) {
+    Double_t invMass;
+    for (Int_t s{0}; s != j; ++s) {
       // Primo ciclo che itera su tutte le particelle
-      for (int k{s + 1}; k != j; ++k) {
+      for (Int_t k{s + 1}; k != j; ++k) {
         // Secondo ciclo che parte dalla particella a cui è arrivato il primo e
         // arriva fino alla fine
         invMass = EventPart[s].InvMass(EventPart[k]);
@@ -177,7 +177,7 @@ int main(int argc, char **argv) {
   hInvariantMassDecad->Draw();
 
   // Salvataggio dei grafici sul file root
-  TFile *outputFile = new TFile("output_histograms.root", "RECREATE");
+  TFile *outputFile = new TFile("output/histograms.root", "RECREATE");
   hTypes->Write();
   hAngles->Write();
   hImpulse->Write();
