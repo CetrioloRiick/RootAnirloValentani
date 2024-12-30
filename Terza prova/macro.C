@@ -108,7 +108,7 @@ Stampare a schermo i valori dei parametri chiesti*/
     TH1F *h5=(TH1F*)inputFile->Get("hInvariantMassDecad");
     
 
-    TH1F *sub12= new TH1F("sub12", "sub12", 500, 0, 2);
+    TH1F *sub12= new TH1F("sub12", "sub12", 100, 0, 2);
     sub12->Add(h1, 1);
     sub12->Add(h2, -1);
 
@@ -117,7 +117,7 @@ Stampare a schermo i valori dei parametri chiesti*/
 
 
 
-    TH1F *sub34= new TH1F("sub34", "sub34", 500, 0, 2);
+    TH1F *sub34= new TH1F("sub34", "sub34", 100, 0, 2);
     sub34->Add(h3, 1);
     sub34->Add(h4, -1);
 

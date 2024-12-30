@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 
   // particle2.SetImpulse({1, 1, 1});
   const int nGen{100};
-  const int N{nGen + 20};
+  const int N{nGen + 50};
   const int nEvents{10000}; // aggiungere 2 zeri
   int j;
   TH1F *hTypes = new TH1F("hTypes", "particle numbers", 7, 0, 7);
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   TH1F *hImpulse = new TH1F("hImpulse", "", 1000, 0, 10);
   TH1F *hEnergy = new TH1F("hEnergy", "", 1000, 0, 10);
   TH1F *hTransversImpulse = new TH1F("hTransversImpulse", "", 40, 0, 3);
-  TH1F *hInvariantMass = new TH1F("hInvariantMass", "", 100, 0, 10);
+  TH1F *hInvariantMass = new TH1F("hInvariantMass", "", 500, 0, 10);
   TH1F *hInvariantMassDiscCharge =
       new TH1F("hInvariantMassDiscCharge", "", 100, 0, 2);
  // hInvariantMassDiscCharge->Sumw2();
@@ -84,17 +84,17 @@ int main(int argc, char **argv) {
 
     // Funzione per determinare l'indice della particella in base a x
     auto generateParticleName = [&](double x) -> std::string {
-      if (x < 0.4)
+      if (x < 0.35)
         return "pi+";
-      if (x < 0.8)
+      if (x < 0.7)
         return "pi-";
-      if (x < 0.85)
+      if (x < 0.75)
         return "K+";
-      if (x < 0.9)
+      if (x < 0.8)
         return "K-";
-      if (x < 0.945)
+      if (x < 0.85)
         return "P+";
-      if (x < 0.99)
+      if (x < 0.9)
         return "P-";
       return "K*";
     };
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
       p.SetIndex(name);
 
       if (name == "K*") {
-        if (x < 0.995) {
+        if (x < 0.95) {
           EventParticle[j].SetIndex("pi+");
           EventParticle[j + 1].SetIndex("K-");
           // hTypes->Fill(p.GetIndex());
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 
       hTypes->Fill(p.GetIndex());
 
-      double It{std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2)};
+      double It{std::sqrt(std::pow(p.GetImpulse().x, 2) + std::pow(p.GetImpulse().y, 2))};
       hTransversImpulse->Fill(It);
 
       hEnergy->Fill(p.GetEnergy());
@@ -176,25 +176,33 @@ int main(int argc, char **argv) {
   hTransversImpulse->Draw();
   TCanvas *c6 = new TCanvas("c6", "Invariant Mass Total", 200, 10, 600, 400);
   hInvariantMass->Draw();
+    TH1F *addDiscConc= new TH1F("addDiscConc", "addDiscConc", 500, 0, 2);
+    addDiscConc->Add(hInvariantMassDiscCharge, 1);
+    addDiscConc->Add(hInvariantMassConcCharge, 1);
+    addDiscConc->Draw("same");
+    TH1F *Diff= new TH1F("Diff", "Diff", 500, 0, 10);
+    Diff->Add(hInvariantMass, 1);
+    Diff->Add(addDiscConc, -1);
+    Diff->Draw("same");
   TCanvas *c7 =
       new TCanvas("c7", "Invariant Mass All Discord", 200, 10, 600, 400);
-  Double_t scale = 1/hInvariantMassDiscCharge->Integral();
-  hInvariantMassDiscCharge->Scale(scale);
+  // Double_t scale = 1/hInvariantMassDiscCharge->Integral();
+  // hInvariantMassDiscCharge->Scale(scale);
   hInvariantMassDiscCharge->Draw();
   TCanvas *c8 =
       new TCanvas("c8", "Invariant Mass Alll Concord", 200, 10, 600, 400);
-  scale = 1/hInvariantMassConcCharge->Integral();
-  hInvariantMassConcCharge->Scale(scale);
+  // scale = 1/hInvariantMassConcCharge->Integral();
+  // hInvariantMassConcCharge->Scale(scale);
   hInvariantMassConcCharge->Draw();
   TCanvas *c9 = new TCanvas(
       "c9", "Invariant Mass pione+/Kaone- e pione-/Kaone+", 200, 10, 600, 400);
-  scale = 1/hInvariantMassKPDisc->Integral();
-  hInvariantMassKPDisc->Scale(scale);
+  // scale = 1/hInvariantMassKPDisc->Integral();
+  // hInvariantMassKPDisc->Scale(scale);
   hInvariantMassKPDisc->Draw();
   TCanvas *c10 = new TCanvas(
       "c10", "Invariant Mass pione+/Kaone+ e pione-/Kaone-", 200, 10, 600, 400);
-  scale = 1/hInvariantMassKPConc->Integral();
-  hInvariantMassKPConc->Scale(scale);
+  // scale = 1/hInvariantMassKPConc->Integral();
+  // hInvariantMassKPConc->Scale(scale);
   hInvariantMassKPConc->Draw();
   TCanvas *c11 = new TCanvas("c11", "Invariant Mass Decad", 200, 10, 600, 400);
   hInvariantMassDecad->Draw();
