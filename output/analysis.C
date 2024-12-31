@@ -13,7 +13,10 @@ bool inRange(Double_t start, Double_t stop, Double_t value) {
 
 void analysis() {
   TFile *inputFile = new TFile("histograms.root");
-
+ 
+  // DEfinizione opzioni grafiche per parametri in legenda grafici
+  gStyle->SetOptFit(1111);
+ 
   // PUNTO 1
   TH1F *hTypes = (TH1F *)inputFile->Get("hTypes");
   TCanvas *c0 = new TCanvas("c0", "Generated Particles", 200, 10, 600, 400);
@@ -101,14 +104,20 @@ void analysis() {
   sub12->Add(h1, 1);
   sub12->Add(h2, -1);
   TCanvas *c5 = new TCanvas("c5", "Subtraction 1 - 2", 200, 10, 600, 400);
+  TF1 *sub12Fit= new TF1("sub12Fit", "gaus", 0.4, 2);
+  sub12->Fit(sub12Fit);
   sub12->Draw();
+  sub12->Draw("E,P,SAME");
 
   TH1F *sub34 = new TH1F("sub34", "sub34", 100, 0, 2);
   sub34->Add(h3, 1);
   sub34->Add(h4, -1);
   TCanvas *c6 = new TCanvas("c6", "Subtraction 3 - 4", 200, 10, 600, 400);
-  sub34->Draw();
-
+    TF1 *sub34Fit= new TF1("sub34Fit", "gaus", 0.6, 1.6);
+    sub34->Fit(sub34Fit);
+    sub34->Draw();
+    sub34->Draw("E,P,SAME");
+    
   TCanvas *c7 = new TCanvas("c7", "Invariant Mass Decad", 200, 10, 600, 400);
   h5->Draw();
 }

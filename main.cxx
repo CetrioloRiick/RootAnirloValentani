@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
   const Int_t nGen{100};    // Particelle generate sicuramente
   const Int_t N{nGen + 20}; // Particelle massime generabili (lunghezza array)
-  const Int_t nEvents{10000};
+  const Int_t nEvents{100000};
   Int_t j; // Contatore per numero di particelle generate effettive
 
   // Creazione di tutti gli istogrammi
