@@ -40,25 +40,27 @@ int main(int argc, char **argv) {
   // particle2.SetImpulse({1, 1, 1});
   const int nGen{100};
   const int N{nGen + 50};
-  const int nEvents{10000}; // aggiungere 2 zeri
+  const int nEvents{100000}; // aggiungere 2 zeri
   int j;
   TH1F *hTypes = new TH1F("hTypes", "particle numbers", 7, 0, 7);
   TH2F *hAngles =
-      new TH2F("hAngles", "", 100, 0, TMath::Pi(), 100, 0, 2 * TMath::Pi());
+      new TH2F("hAngles", "", 100, -TMath::Pi()/2, TMath::Pi()/2, 100, 0, 2 * TMath::Pi());
+  TH1F *hTheta = new TH1F("hTheta", "", 100, -TMath::Pi()/2, TMath::Pi()/2);
+  TH1F *hPhi = new TH1F("hPhi", "", 100, 0, 2*TMath::Pi());
   TH1F *hImpulse = new TH1F("hImpulse", "", 1000, 0, 10);
   TH1F *hEnergy = new TH1F("hEnergy", "", 1000, 0, 10);
   TH1F *hTransversImpulse = new TH1F("hTransversImpulse", "", 40, 0, 3);
   TH1F *hInvariantMass = new TH1F("hInvariantMass", "", 500, 0, 10);
   TH1F *hInvariantMassDiscCharge =
       new TH1F("hInvariantMassDiscCharge", "", 100, 0, 2);
- // hInvariantMassDiscCharge->Sumw2();
+  hInvariantMassDiscCharge->Sumw2();
   TH1F *hInvariantMassConcCharge =
       new TH1F("hInvariantMassConcCharge", "", 100, 0, 2);
- // hInvariantMassConcCharge->Sumw2();
+  hInvariantMassConcCharge->Sumw2();
   TH1F *hInvariantMassKPConc = new TH1F("hInvariantMassKPConc", "", 100, 0, 2);
-//  hInvariantMassKPConc->Sumw2();
+  hInvariantMassKPConc->Sumw2();
   TH1F *hInvariantMassKPDisc = new TH1F("hInvariantMassKPDisc", "", 100, 0, 2);
-//  hInvariantMassKPDisc->Sumw2();
+  hInvariantMassKPDisc->Sumw2();
   TH1F *hInvariantMassDecad = new TH1F("hInvariantMassDecad", "", 100, 0, 2);
 
   gRandom->SetSeed();
@@ -72,7 +74,7 @@ int main(int argc, char **argv) {
 
     // Funzione per generare casualmente impulso in direzioni casuali
     auto generateImpulse = [&]() -> PhysVector {
-      double theta = gRandom->TRandom::Uniform(0, TMath::Pi());
+      double theta = gRandom->TRandom::Uniform(0, TMath::Pi())-TMath::Pi()/2;
       double phi = gRandom->TRandom::Uniform(0, 2 * TMath::Pi());
       double Ptot = gRandom->TRandom::Exp(1.);
       hAngles->Fill(theta, phi);
@@ -84,17 +86,17 @@ int main(int argc, char **argv) {
 
     // Funzione per determinare l'indice della particella in base a x
     auto generateParticleName = [&](double x) -> std::string {
-      if (x < 0.35)
-        return "pi+";
-      if (x < 0.7)
+      if (x < 0.4)
         return "pi-";
-      if (x < 0.75)
-        return "K+";
       if (x < 0.8)
-        return "K-";
+        return "pi+";
       if (x < 0.85)
-        return "P+";
+        return "K+";
       if (x < 0.9)
+        return "K-";
+      if (x < 0.945)
+        return "P+";
+      if (x < 0.99)
         return "P-";
       return "K*";
     };
@@ -108,7 +110,7 @@ int main(int argc, char **argv) {
       p.SetIndex(name);
 
       if (name == "K*") {
-        if (x < 0.95) {
+        if (x < 0.995) {
           EventParticle[j].SetIndex("pi+");
           EventParticle[j + 1].SetIndex("K-");
           // hTypes->Fill(p.GetIndex());
@@ -285,6 +287,8 @@ int main(int argc, char **argv) {
   TFile *outputFile = new TFile("output_histograms.root", "RECREATE");
   hTypes->Write();
   hAngles->Write();
+  hTheta->Write();
+  hPhi->Write();
   hImpulse->Write();
   hEnergy->Write();
   hTransversImpulse->Write();

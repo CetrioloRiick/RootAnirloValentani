@@ -11,6 +11,10 @@ bool inRange(double start, double stop, double value){
 }
 
 void macro(){
+
+    gStyle->SetOptFit(1111);
+
+
     TFile *inputFile= new TFile("output_histograms.root");
 
     TH1F *hTypes=(TH1F*)inputFile->Get("hTypes");
@@ -37,14 +41,14 @@ void macro(){
  Rifaccio la stessa cosa per le y, tra zero e 2pi
  faccio il fit con una funzione costante in entrambe e faccio stampare il chiquadro ridotto e la probabilità del fit*/
     TH2F *hAngles=(TH2F*)inputFile->Get("hAngles");
-    TH1F *hTheta = new TH1F("hTheta", "hTheta", 100, 0., TMath::Pi());
-    TH1F *hPhi = new TH1F("hPhi", "hPhi", 100, 0., 2*TMath::Pi());
+    TH1F *hTheta = (TH1F*)inputFile->Get("hTheta");
+    TH1F *hPhi = (TH1F*)inputFile->Get("hPhi");;
     Int_t binsX=hAngles->GetNbinsX();
     cout << "numero di binX " << binsX << '\n';
     Int_t binsY=hAngles->GetNbinsY();
     cout << "numero di binY " << binsY << '\n';
 
-    TF1 *fTheta = new TF1("fTheta", "[0]", 0., TMath::Pi());
+    TF1 *fTheta = new TF1("fTheta", "[0]", -TMath::Pi()/2, TMath::Pi()/2);
     TF1 *fPhi = new TF1("fPhi", "[0]", 0., 2*TMath::Pi());
 
     TCanvas *c1 = new TCanvas("c1", "bbb", 200, 10, 600, 400);
@@ -89,7 +93,7 @@ void macro(){
 /*Fare un fit con una funzione esponenziale per il grafico dell'impulso, e^-[0]x,
 Stampare a schermo i valori dei parametri chiesti*/
     TH1F *hImpulse=(TH1F*)inputFile->Get("hImpulse");
-    TF1 *impulseFit= new TF1("impulseFit", "expo(0)", 0, 10);
+    TF1 *impulseFit= new TF1("impulseFit", "expo", 0, 10);
     TCanvas *c4 = new TCanvas("c4", "eee", 200, 10, 600, 400);
     hImpulse->Draw();
     hImpulse->Fit(impulseFit);
@@ -113,7 +117,10 @@ Stampare a schermo i valori dei parametri chiesti*/
     sub12->Add(h2, -1);
 
     TCanvas *c5 = new TCanvas("c5", "fff", 200, 10, 600, 400);
+    TF1 *sub12Fit= new TF1("sub12Fit", "gaus", 0.4, 2);
+    sub12->Fit(sub12Fit);
     sub12->Draw();
+    sub12->Draw("E,P,SAME");
 
 
 
@@ -122,7 +129,11 @@ Stampare a schermo i valori dei parametri chiesti*/
     sub34->Add(h4, -1);
 
     TCanvas *c6 = new TCanvas("c6", "ggg", 200, 10, 600, 400);
+    TF1 *sub34Fit= new TF1("sub34Fit", "gaus", 0.6, 1.6);
+    sub34->Fit(sub34Fit);
     sub34->Draw();
+    sub34->Draw("E,P,SAME");
+   
 
     TCanvas *c7 = new TCanvas("c7", "hhh", 200, 10, 600, 400);
     h5->Draw();
